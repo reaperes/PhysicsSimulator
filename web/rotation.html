@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8" />
+  <title>NHN NEXT Physics engine (mini)</title>
+  <link rel="stylesheet" href="static/css/reset.min.css">
+  <link rel="stylesheet" href="static/css/index.css">
+</head>
+<body style="background-color: #000000">
+<section id="npmenu">
+  <article id="npmenu-overview">
+    <header>
+      <h1>NPEngine.js</h1>
+      <h2>NHN NEXT educational physics engine</h2>
+    </header>
+    <a href="#">Overview</a>
+    <a href="https://github.com/reaperes/PhysicsEngine.git">View source code on Github</a>
+  </article>
+  <nav id="npmenu-simulation-list">
+    <a class="hoverable" href="pendulum.html">Pendulum</a>
+    <a class="hoverable" href="spring.html">Spring</a>
+    <a class="hoverable" href="collision2d.html">Collision2d</a>
+    <a class="hoverable" href="pendulumCollision.html">Pendulum Collision</a>
+    <a class="hoverable" href="pendulumCollisionPlus.html">Pendulum Collision Plus</a>
+    <a class="hoverable" href="parabolicMotion.html">Parabolic Motion</a>
+    <a class="hoverable" href="forcedSpring.html">Forced Spring</a>
+    <a class="hoverable" href="rotation.html">Rotation</a>
+    <a class="hoverable" href="rotationPlus.html">Rotation 2</a>
+    <a class="hoverable" href="kepler.html">Kepler</a>
+  </nav>
+</section>
+<div id='npengine-container'>
+  <div class="hoverable" id="gui-container"></div>
+  <canvas id="canvas" style="background: #000000;"></canvas>
+</div>
+<script>
+  (function () {
+    var isFirst = true;
+    var canvas = document.getElementById('canvas');
+
+    window.addEventListener('resize', resizeCanvas, false);
+    function resizeCanvas() {
+      if (isFirst) {
+        canvas.width = window.innerWidth;
+        canvas.height = window.innerHeight;
+        isFirst = false;
+      }
+    }
+    resizeCanvas();
+  })();
+
+  var content = document.getElementById('content');
+</script>
+<script type="text/javascript" src="static/js/npengine.dev.js"></script>
+<script type="text/javascript" src="static/js/dat.gui.min.js"></script>
+<script type="text/javascript">
+  var c = document.getElementById("canvas");
+  var engine = new NPEngine(c);
+  var grid = new NPEngine.RotationGrid;
+  var motion = new NPEngine.RotationMotion({
+    k: 200000,
+    ballMass: 1.1,
+    ballRadius: 0.1,
+    ballVelocity: 3,
+    blockMass: 15,
+    blockWidth: 0.3,
+    blockHeight: 1
+  });
+  engine.setGrid(grid);
+  engine.addDisplayObject(motion);
+  engine.ready();
+
+  // default value
+  var DefaultValue = function () {
+//    this.k = 200000;
+    this.ballMass = 1.1;
+    this.ballVelocity = 3;
+    this.blockMass = 15;
+    this.blockWidth = 0.3;
+    this.blockHeight = 1;
+  };
+
+  window.onload = function () {
+    var defaultValue = new DefaultValue();
+    var gui = new dat.GUI({autoPlace: false});
+    document.getElementById('gui-container').appendChild(gui.domElement);
+
+//    var kFolder = gui.addFolder('탄성 계수 (N/m)');
+//    kFolder.close();
+//    setController(kFolder, 'k');
+
+    var ballFolder = gui.addFolder('공 설정');
+    ballFolder.open();
+    setController(ballFolder, 'ballMass');
+    setController(ballFolder, 'ballVelocity');
+
+    var blockFolder = gui.addFolder('블록 설정');
+    blockFolder.open();
+    setController(blockFolder, 'blockMass');
+    setController(blockFolder, 'blockWidth');
+    setController(blockFolder, 'blockHeight');
+
+    function setController(guiFolder, variable) {
+      var gui = guiFolder.add(defaultValue, variable);
+      gui.onFinishChange(function (value) {
+        var option = {};
+        option[variable.toString()] = value;
+        engine.stop();
+        motion.setVariables(option);
+        engine.ready();
+      });
+    }
+  };
+</script>
+</body>
+</html>

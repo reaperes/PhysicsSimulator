@@ -1,0 +1,93 @@
+body {
+    font-family: 'Play', sans-serif;
+    overflow: hidden;
+}
+
+#npmenu {
+    color: rgba(255, 255, 255, 1.0);
+    height: 100%;
+    position: fixed;
+    left: 20px;
+    top: 20px;
+}
+
+#npmenu:hover #npmenu-simulation-list a {
+    opacity: 1.0;
+}
+
+#npmenu-overview {
+    background-color: rgba(60,60,60,0.8);
+    padding: 12px 10px;
+    margin-bottom: 2px;
+}
+
+#npmenu-overview h1 {
+    color: rgba(255, 255, 255, 1.0);
+    font-size: 20px;
+    margin-top: 1px;
+    margin-bottom: 2px;
+}
+
+#npmenu-overview h2 {
+    color: rgba(255, 255, 255, 0.8);
+    font-size: 14px;
+    margin-bottom: 3px;
+}
+
+#npmenu-overview a {
+    color: rgba(255, 255, 255, 0.6);
+    font-size: 12px;
+    text-decoration: underline;
+    padding: 0 2px;
+}
+
+#npmenu-simulation-list {
+    display: block;
+}
+
+#npmenu-simulation-list a {
+    color: rgba(255, 255, 255, 0.5);
+    opacity: 0.2;
+    display: block;
+    line-height: 32px;
+    font-size: 15px;
+    /*border-left: 4px solid #fff;*/
+    padding-left: 10px;
+}
+
+#npmenu-simulation-list a:hover {
+    color: rgba(255, 255, 255, 1);
+    opacity: 1.0;
+}
+
+/* npengine */
+
+#gui-container {
+    opacity: 0.5;
+    position: fixed;
+    display: inline;
+    float: right;
+    right: 0;
+}
+
+#gui-container .title {
+    font-size: 13px;
+}
+
+#gui-container div, input {
+    font-size: 12px;
+}
+
+#gui-container:hover {
+    opacity: 1.0;
+}
+
+#canvas {
+    background-color: #000000;
+    display: inline;
+}
+
+/* transitions */
+.hoverable {
+    -webkit-transition: all 320ms ease-out;
+}

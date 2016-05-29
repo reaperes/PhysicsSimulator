@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8" />
+  <title>NHN NEXT Physics engine (mini)</title>
+  <link rel="stylesheet" href="static/css/reset.min.css">
+  <link rel="stylesheet" href="static/css/index.css">
+</head>
+<body style="background-color: #000000">
+<section id="npmenu">
+  <article id="npmenu-overview">
+    <header>
+      <h1>NPEngine.js</h1>
+      <h2>NHN NEXT educational physics engine</h2>
+    </header>
+    <a href="#">Overview</a>
+    <a href="https://github.com/reaperes/PhysicsEngine.git">View source code on Github</a>
+  </article>
+  <nav id="npmenu-simulation-list">
+    <a class="hoverable" href="pendulum.html">Pendulum</a>
+    <a class="hoverable" href="spring.html">Spring</a>
+    <a class="hoverable" href="collision2d.html">Collision2d</a>
+    <a class="hoverable" href="pendulumCollision.html">Pendulum Collision</a>
+    <a class="hoverable" href="pendulumCollisionPlus.html">Pendulum Collision Plus</a>
+    <a class="hoverable" href="parabolicMotion.html">Parabolic Motion</a>
+    <a class="hoverable" href="forcedSpring.html">Forced Spring</a>
+    <a class="hoverable" href="rotation.html">Rotation</a>
+    <a class="hoverable" href="rotationPlus.html">Rotation 2</a>
+    <a class="hoverable" href="kepler.html">Kepler</a>
+  </nav>
+</section>
+<div id='npengine-container'>
+  <div class="hoverable" id="gui-container"></div>
+  <canvas id="canvas" style="background: #000000;"></canvas>
+</div>
+<script>
+  (function () {
+    var isFirst = true;
+    var canvas = document.getElementById('canvas');
+
+    window.addEventListener('resize', resizeCanvas, false);
+    function resizeCanvas() {
+      if (isFirst) {
+        canvas.width = window.innerWidth;
+        canvas.height = window.innerHeight;
+        isFirst = false;
+      }
+    }
+    resizeCanvas();
+  })();
+
+  var content = document.getElementById('content');
+</script>
+<script type="text/javascript" src="static/js/npengine.dev.js"></script>
+<script type="text/javascript" src="static/js/dat.gui.min.js"></script>
+<script type="text/javascript">
+  var c = document.getElementById("canvas");
+  var engine = new NPEngine(c);
+  var grid = new NPEngine.Grid;
+  var spring = new NPEngine.Spring({
+    mass: 2,
+    k: 100,
+    mu: 0
+  });
+  engine.setGrid(grid);
+  engine.addDisplayObject(spring);
+  engine.ready();
+
+  // default value
+  var DefaultValue = function () {
+    this.mass = 2;
+    this.k = 100;
+    this.mu = 0;
+  };
+
+  window.onload = function () {
+    var defaultValue = new DefaultValue();
+    var gui = new dat.GUI({autoPlace: false});
+    document.getElementById('gui-container').appendChild(gui.domElement);
+
+    var massFolder = gui.addFolder('질량 (Kg)');
+    massFolder.open();
+    var mass = massFolder.add(defaultValue, 'mass');
+    mass.onFinishChange(function (value) {
+      engine.stop();
+      spring.setVariables({mass: value});
+      engine.ready();
+    });
+
+    var kFolder = gui.addFolder('탄성 계수 (N/m)');
+    kFolder.open();
+    var k = kFolder.add(defaultValue, 'k');
+    k.onFinishChange(function (value) {
+      engine.stop();
+      spring.setVariables({k: value});
+      engine.ready();
+    });
+
+    var muFolder = gui.addFolder('마찰 계수 (N s/m)');
+    muFolder.open();
+    var mu = muFolder.add(defaultValue, 'mu');
+    mu.onFinishChange(function (value) {
+      engine.stop();
+      spring.setVariables({mu: value});
+      engine.ready();
+    });
+  };
+</script>
+</body>
+</html>
