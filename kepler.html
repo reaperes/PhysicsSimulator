@@ -17,7 +17,7 @@
     <a href="https://github.com/reaperes/PhysicsEngine.git">View source code on Github</a>
   </article>
   <nav id="npmenu-simulation-list">
-    <a class="hoverable" href="pendulum.html">Pendulum</a>
+    <a class="hoverable" href="index.html">Pendulum</a>
     <a class="hoverable" href="spring.html">Spring</a>
     <a class="hoverable" href="collision2d.html">Collision2d</a>
     <a class="hoverable" href="pendulumCollision.html">Pendulum Collision</a>
@@ -56,89 +56,47 @@
 <script type="text/javascript">
   var c = document.getElementById("canvas");
   var engine = new NPEngine(c);
-  var grid = new NPEngine.Grid;
-  var collision = new NPEngine.Collision2d({
-    k: 10000,
-    mu: 0,
-    mass1: 2,
-    ball1X: -3,
-    ball1Y: 0.5,
-    diameter1: 0.4,
-    velocity1_x: 3,
-    velocity1_y: 0,
-    mass2: 2,
-    ball2X: 1,
-    ball2Y: 0,
-    diameter2: 0.4,
-    velocity2_x: 0,
-    velocity2_y: 0
+  var grid = new NPEngine.KeplerGrid;
+  var motion = new NPEngine.Kepler({
+    speed: 5,
+    augmentedFactor: 30,
+    dampingFactor: 1
   });
   engine.setGrid(grid);
-  engine.addDisplayObject(collision);
+  engine.addDisplayObject(motion);
   engine.ready();
-
-  engine.setMouseListener(function (e) {
-    debugger;
-    engine.stop();
-    value.ball1X = collision.grid.revertToVectorValueX(e.pageX);
-    value.ball1Y = collision.grid.revertToVectorValueY(e.pageY);
-    collision.setVariables({
-      ball1X: collision.grid.revertToVectorValueX(e.pageX),
-      ball1Y: collision.grid.revertToVectorValueY(e.pageY)
-    });
-    engine.ready();
-  });
 
   // default value
   var DefaultValue = function () {
-    this.mu = 10;
-    this.mass1 = 2;
-    this.ball1X = -3.0;
-    this.ball1Y = 0.5;
-    this.velocity1_x = 3;
-    this.velocity1_y = 0;
-    this.mass2 = 2;
-    this.ball2X = 1;
-    this.ball2Y = 0;
-    this.velocity2_x = 0;
-    this.velocity2_y = 0;
+    this.speed = 5;
+    this.augmentedFactor = 30;
+    this.dampingFactor = 1;
   };
 
-  var value;
   window.onload = function () {
     var defaultValue = new DefaultValue();
-    value = defaultValue;
     var gui = new dat.GUI({autoPlace: false});
     document.getElementById('gui-container').appendChild(gui.domElement);
 
-    var muFolder = gui.addFolder('마찰 계수 (N s/m)');
-    muFolder.open();
-    setController(muFolder, 'mu', {Ideal:0, Rigid:10, Flexible:100});
+    var augmentedFactorFolder = gui.addFolder('지구와 달 거리 (1: 원래 모습)');
+    augmentedFactorFolder.open();
+    setController(augmentedFactorFolder, 'augmentedFactor');
 
-    var ball1Folder = gui.addFolder('공 1');
-    ball1Folder.open();
-    setController(ball1Folder, 'mass1');
-    setController(ball1Folder, 'ball1X');
-    setController(ball1Folder, 'ball1Y');
-    setController(ball1Folder, 'velocity1_x');
-    setController(ball1Folder, 'velocity1_y');
+    var dampingFactorFolder = gui.addFolder('지구 속도 조절 (1.0: 원래 모습)');
+    dampingFactorFolder.open();
+    setController(dampingFactorFolder, 'dampingFactor');
 
-    var ball2Folder = gui.addFolder('공 2');
-    ball2Folder.open();
-    setController(ball2Folder, 'mass2');
-    setController(ball2Folder, 'ball2X');
-    setController(ball2Folder, 'ball2Y');
-    setController(ball2Folder, 'velocity2_x');
-    setController(ball2Folder, 'velocity2_y');
+    var speedFolder = gui.addFolder('시뮬레이션 속도');
+    speedFolder.close();
+    setController(speedFolder, 'speed');
 
-    function setController(guiFolder, variable, list) {
-      var gui = guiFolder.add(defaultValue, variable, list);
+    function setController(guiFolder, variable) {
+      var gui = guiFolder.add(defaultValue, variable);
       gui.onFinishChange(function (value) {
         var option = {};
         option[variable.toString()] = value;
-
         engine.stop();
-        collision.setVariables(option);
+        motion.setVariables(option);
         engine.ready();
       });
     }

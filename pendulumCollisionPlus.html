@@ -17,7 +17,7 @@
     <a href="https://github.com/reaperes/PhysicsEngine.git">View source code on Github</a>
   </article>
   <nav id="npmenu-simulation-list">
-    <a class="hoverable" href="pendulum.html">Pendulum</a>
+    <a class="hoverable" href="index.html">Pendulum</a>
     <a class="hoverable" href="spring.html">Spring</a>
     <a class="hoverable" href="collision2d.html">Collision2d</a>
     <a class="hoverable" href="pendulumCollision.html">Pendulum Collision</a>
@@ -56,21 +56,28 @@
 <script type="text/javascript">
   var c = document.getElementById("canvas");
   var engine = new NPEngine(c);
-  var grid = new NPEngine.Grid;
-  var spring = new NPEngine.Spring({
-    mass: 2,
-    k: 100,
-    mu: 0
+  var collision = new NPEngine.PendulumCollisionPlus({
+    num: 5,
+    k: 10000000,
+    mu: 0,
+    theta1: 0,
+    theta2: 0,
+    theta3: 0,
+    theta4: 0,
+    theta5: 30
   });
-  engine.setGrid(grid);
-  engine.addDisplayObject(spring);
+  engine.addDisplayObject(collision);
   engine.ready();
 
   // default value
   var DefaultValue = function () {
-    this.mass = 2;
-    this.k = 100;
+    this.k = 10000000;
     this.mu = 0;
+    this.theta1 = 0;
+    this.theta2 = 0;
+    this.theta3 = 0;
+    this.theta4 = 0;
+    this.theta5 = 30;
   };
 
   window.onload = function () {
@@ -78,32 +85,32 @@
     var gui = new dat.GUI({autoPlace: false});
     document.getElementById('gui-container').appendChild(gui.domElement);
 
-    var massFolder = gui.addFolder('질량 (Kg)');
-    massFolder.open();
-    var mass = massFolder.add(defaultValue, 'mass');
-    mass.onFinishChange(function (value) {
-      engine.stop();
-      spring.setVariables({mass: value});
-      engine.ready();
-    });
-
     var kFolder = gui.addFolder('탄성 계수 (N/m)');
     kFolder.open();
-    var k = kFolder.add(defaultValue, 'k');
-    k.onFinishChange(function (value) {
-      engine.stop();
-      spring.setVariables({k: value});
-      engine.ready();
-    });
+    setController(kFolder, 'k');
 
     var muFolder = gui.addFolder('마찰 계수 (N s/m)');
     muFolder.open();
-    var mu = muFolder.add(defaultValue, 'mu');
-    mu.onFinishChange(function (value) {
-      engine.stop();
-      spring.setVariables({mu: value});
-      engine.ready();
-    });
+    setController(muFolder, 'mu');
+
+    var pendulumFolder = gui.addFolder('진자 각도 설정');
+    pendulumFolder.open();
+    for (var i=1; i<=5; i++) {
+      setController(pendulumFolder, 'theta'+i);
+    }
+
+    function setController(guiFolder, variable) {
+      var gui = guiFolder.add(defaultValue, variable);
+      gui.onFinishChange(function (value) {
+        console.log(variable);
+        var option = {};
+        option[variable.toString()] = value;
+
+        engine.stop();
+        collision.setVariables(option);
+        engine.ready();
+      });
+    }
   };
 </script>
 </body>

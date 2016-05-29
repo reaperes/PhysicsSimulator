@@ -17,7 +17,7 @@
     <a href="https://github.com/reaperes/PhysicsEngine.git">View source code on Github</a>
   </article>
   <nav id="npmenu-simulation-list">
-    <a class="hoverable" href="pendulum.html">Pendulum</a>
+    <a class="hoverable" href="index.html">Pendulum</a>
     <a class="hoverable" href="spring.html">Spring</a>
     <a class="hoverable" href="collision2d.html">Collision2d</a>
     <a class="hoverable" href="pendulumCollision.html">Pendulum Collision</a>
@@ -56,28 +56,25 @@
 <script type="text/javascript">
   var c = document.getElementById("canvas");
   var engine = new NPEngine(c);
-  var collision = new NPEngine.PendulumCollisionPlus({
-    num: 5,
-    k: 10000000,
+  var grid = new NPEngine.QuadrantGrid;
+  var motion = new NPEngine.ParabolicMotion({
+    gravity: 9.8,
     mu: 0,
-    theta1: 0,
-    theta2: 0,
-    theta3: 0,
-    theta4: 0,
-    theta5: 30
+    mass: 1,
+    theta: 45,
+    velocity: 60
   });
-  engine.addDisplayObject(collision);
+  engine.setGrid(grid);
+  engine.addDisplayObject(motion);
   engine.ready();
 
   // default value
   var DefaultValue = function () {
-    this.k = 10000000;
+    this.gravity = 9.8;
     this.mu = 0;
-    this.theta1 = 0;
-    this.theta2 = 0;
-    this.theta3 = 0;
-    this.theta4 = 0;
-    this.theta5 = 30;
+    this.mass = 1;
+    this.theta = 45;
+    this.velocity = 60;
   };
 
   window.onload = function () {
@@ -85,29 +82,29 @@
     var gui = new dat.GUI({autoPlace: false});
     document.getElementById('gui-container').appendChild(gui.domElement);
 
-    var kFolder = gui.addFolder('탄성 계수 (N/m)');
-    kFolder.open();
-    setController(kFolder, 'k');
-
-    var muFolder = gui.addFolder('마찰 계수 (N s/m)');
+    var muFolder = gui.addFolder('마찰 계수');
     muFolder.open();
     setController(muFolder, 'mu');
 
-    var pendulumFolder = gui.addFolder('진자 각도 설정');
-    pendulumFolder.open();
-    for (var i=1; i<=5; i++) {
-      setController(pendulumFolder, 'theta'+i);
-    }
+    var massFolder = gui.addFolder('질량 (kg)');
+    massFolder.open();
+    setController(massFolder, 'mass');
+
+    var thetaFolder = gui.addFolder('입사 각도');
+    thetaFolder.open();
+    setController(thetaFolder, 'theta');
+
+    var velocityFolder = gui.addFolder('입사 속도');
+    velocityFolder.open();
+    setController(velocityFolder, 'velocity');
 
     function setController(guiFolder, variable) {
       var gui = guiFolder.add(defaultValue, variable);
       gui.onFinishChange(function (value) {
-        console.log(variable);
         var option = {};
         option[variable.toString()] = value;
-
         engine.stop();
-        collision.setVariables(option);
+        motion.setVariables(option);
         engine.ready();
       });
     }
